@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chicken Fire</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Lalezar&display=swap">
+<style>
+/* Layout: dark oxblood hero band, then a sticky category strip and a two-column printed-menu style list.
+   Ordering sheet slides up from the bottom. Arabic, right to left. */
+:root {
+  --bg: #FAF6F3;
+  --surface: #FFFFFF;
+  --ink: #2B1612;
+  --muted: #78605A;
+  --line: #E7D9D2;
+  --fire: #C62A1C;
+  --fire-ink: #FFFFFF;
+  --amber: #F3B21B;
+  --amber-ink: #2B1612;
+  --band: #34120E;
+  --band-ink: #FFF1E6;
+  --band-muted: #E9C9B8;
+  --bad: #B3261E;
+  --font-display: 'Lalezar', 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #170D0B; --surface: #241311; --ink: #F7E9E1; --muted: #C2A59B; --line: #3B2420;
+    --fire: #FF6B4A; --fire-ink: #1B0C09; --band: #2A0F0C; --band-ink: #FFF1E6; --band-muted: #D9B5A4;
+    --bad: #FF8A80; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #170D0B; --surface: #241311; --ink: #F7E9E1; --muted: #C2A59B; --line: #3B2420;
+  --fire: #FF6B4A; --fire-ink: #1B0C09; --band: #2A0F0C; --band-ink: #FFF1E6; --band-muted: #D9B5A4;
+  --bad: #FF8A80; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 40; background: var(--bg); }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* hero */
+.hero { background: var(--band); color: var(--band-ink); }
+.hero .wrap { padding-block: 18px 40px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 8px; font: 400 1.7rem/1 var(--font-display); letter-spacing: .02em; direction: ltr; }
+.brand svg { width: 26px; height: 26px; fill: var(--amber); }
+.cart-top { border: 1.5px solid var(--band-muted); background: transparent; color: var(--band-ink); border-radius: 6px; padding: 7px 14px; display: flex; gap: 8px; align-items: center; font-weight: 600; }
+.cart-top b { background: var(--amber); color: var(--amber-ink); border-radius: 4px; min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+.hero h1 { font: 400 clamp(2.4rem, 8vw, 4.4rem)/1.12 var(--font-display); margin: 44px 0 12px; max-width: 14ch; text-wrap: balance; }
+.hero h1 em { font-style: normal; color: var(--amber); }
+.hero p { max-width: 52ch; color: var(--band-muted); font-size: 1.05rem; margin: 0 0 22px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-bottom: 26px; }
+.facts span { border: 1px solid var(--band-muted); border-radius: 4px; padding: 3px 12px; font-size: .88rem; }
+.cta { display: inline-block; background: var(--amber); color: var(--amber-ink); font-weight: 600; text-decoration: none; padding: 12px 26px; border-radius: 6px; }
+.cta:hover { background: var(--fire); color: var(--fire-ink); }
+.closed { background: var(--bad); color: #fff; text-align: center; padding: 10px 16px; font-weight: 600; }
+
+/* category strip */
+.chips { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line); }
+.chips .wrap { display: flex; gap: 8px; overflow-x: auto; padding-block: 10px; scrollbar-width: none; }
+.chips .wrap::-webkit-scrollbar { display: none; }
+.chips a { flex: none; text-decoration: none; padding: 5px 14px; border: 1.5px solid var(--line); border-radius: 6px; font-weight: 500; font-size: .92rem; }
+.chips a:hover { border-color: var(--fire); color: var(--fire); }
+
+/* menu */
+.intro { padding-block: 34px 8px; }
+.intro h2, .why h2, .contact h2 { font: 400 2rem/1.2 var(--font-display); margin: 0 0 6px; }
+.intro p { color: var(--muted); margin: 0; max-width: 60ch; }
+.menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 40px 56px; align-items: start; padding-block: 24px 120px; }
+.sec { min-width: 0; scroll-margin-top: 70px; }
+.sec h3 { font: 400 1.9rem/1.2 var(--font-display); margin: 0; display: flex; align-items: center; gap: 10px; }
+.sec h3::before { content: ""; width: 10px; height: 26px; background: var(--fire); border-radius: 2px; }
+.sec .note { color: var(--muted); font-size: .88rem; margin: 2px 0 6px; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; align-items: center; padding: 13px 0; border-bottom: 1px dashed var(--line); }
+.item.has-img { grid-template-columns: 72px minmax(0, 1fr) auto; }
+.item .ph { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; background: var(--line); display: block; }
+.item h4 { margin: 0; font-size: 1.02rem; font-weight: 600; line-height: 1.4; }
+.item p { margin: 2px 0 0; color: var(--muted); font-size: .84rem; line-height: 1.5; }
+.item .per { color: var(--muted); font-size: .78rem; font-variant-numeric: tabular-nums; }
+.opts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.add { border: 0; border-radius: 6px; background: var(--amber); color: var(--amber-ink); padding: 8px 12px; font-weight: 600; display: flex; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.add small { font-size: .74rem; font-weight: 500; opacity: .8; }
+.add:hover, .add:active { background: var(--fire); color: var(--fire-ink); }
+.add.pop { animation: pop .3s ease; }
+@keyframes pop { 50% { transform: scale(1.08); } }
+
+/* why + contact */
+.why { background: var(--surface); border-block: 1px solid var(--line); }
+.why .wrap { padding-block: 40px; }
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 24px 36px; margin-top: 18px; }
+.why-grid h3 { margin: 0 0 4px; font-size: 1.08rem; color: var(--fire); }
+.why-grid p { margin: 0; color: var(--muted); font-size: .95rem; }
+.contact .wrap { padding-block: 40px 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px 48px; }
+.contact dl { margin: 0; display: grid; gap: 14px; }
+.contact dt { color: var(--muted); font-size: .85rem; }
+.contact dd { margin: 0; font-weight: 600; font-size: 1.1rem; }
+.num { direction: ltr; unicode-bidi: isolate; display: inline-block; user-select: all; font-variant-numeric: tabular-nums; }
+.btn { display: inline-block; text-align: center; text-decoration: none; border: 0; border-radius: 6px; padding: 13px 22px; font-weight: 600; background: var(--fire); color: var(--fire-ink); }
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.contact .actions { display: flex; flex-wrap: wrap; gap: 10px; align-self: end; }
+footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 16px 110px; }
+
+/* cart bar + sheet */
+.cartbar { position: fixed; z-index: 20; bottom: 0; left: 0; right: 0; padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: linear-gradient(transparent, var(--bg) 40%); }
+.cartbar button { display: flex; justify-content: space-between; align-items: center; width: min(100%, 560px); margin: 0 auto; border: 0; border-radius: 8px; padding: 14px 18px; background: var(--fire); color: var(--fire-ink); font-weight: 600; box-shadow: 0 6px 24px rgba(0,0,0,.28); }
+.cartbar .tot { font-variant-numeric: tabular-nums; }
+.sheet { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; background: rgba(20, 8, 6, .6); }
+.panel { background: var(--bg); width: min(100%, 560px); max-height: 94%; overflow-y: auto; border-radius: 14px 14px 0 0; padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.panel header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.panel h2 { font: 400 1.8rem/1.2 var(--font-display); margin: 0; }
+.x { border: 1.5px solid var(--line); background: transparent; border-radius: 6px; width: 38px; height: 38px; font-size: 1.1rem; }
+.line { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+.line b { font-weight: 600; }
+.line .lp { font-variant-numeric: tabular-nums; min-width: 64px; text-align: left; font-weight: 600; }
+.qty { display: flex; align-items: center; border: 1.5px solid var(--line); border-radius: 6px; }
+.qty button { width: 34px; height: 34px; border: 0; background: transparent; font-size: 1.15rem; }
+.qty span { min-width: 26px; text-align: center; font-variant-numeric: tabular-nums; }
+.sum { display: grid; gap: 4px; padding: 12px 0; font-variant-numeric: tabular-nums; }
+.sum div { display: flex; justify-content: space-between; color: var(--muted); }
+.sum .grand { color: var(--ink); font-weight: 600; font-size: 1.2rem; }
+.empty { color: var(--muted); padding: 22px 0; text-align: center; }
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 14px; }
+.modes input { position: absolute; opacity: 0; pointer-events: none; }
+.modes label { border: 1.5px solid var(--line); border-radius: 6px; text-align: center; padding: 9px 4px; font-weight: 500; cursor: pointer; }
+.modes input:checked + label { background: var(--fire); border-color: var(--fire); color: var(--fire-ink); }
+.modes input:focus-visible + label { outline: 3px solid var(--amber); outline-offset: 2px; }
+.field { display: grid; gap: 4px; margin-bottom: 12px; }
+.field label { font-size: .88rem; color: var(--muted); }
+.field input, .field textarea { width: 100%; background: var(--surface); border: 1.5px solid var(--line); border-radius: 6px; padding: 10px 12px; font-size: 16px; }
+.field input:focus, .field textarea:focus { border-color: var(--fire); outline: none; }
+#err { color: var(--bad); font-weight: 500; min-height: 1.4em; margin: 4px 0 8px; }
+.hint { color: var(--muted); font-size: .82rem; margin: 8px 0 0; text-align: center; }
+.panel .btn { display: block; width: 100%; }
+.toast { position: fixed; z-index: 70; left: 50%; transform: translateX(-50%); bottom: calc(86px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 6px; font-size: .9rem; }
+@media (max-width: 460px) { .item.has-img { grid-template-columns: 56px minmax(0, 1fr); } .item.has-img .ph { width: 56px; height: 56px; } .item.has-img .opts { grid-column: 1 / -1; justify-content: flex-start; } }
+@media (prefers-reduced-motion: reduce) { .add.pop { animation: none; } html { scroll-behavior: auto; } }
+[hidden] {
+    display: none !important;
+}
+</style>
+</head>
+<body>
+
+
+<div id="app" dir="rtl" lang="ar">
+  <div class="closed" id="closed" hidden>المطعم مقفول حاليًا، مش هتقدر تكمل الطلب دلوقتي. جرّب تاني بعدين.</div>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 1.5c.9 4.3 5.5 6.2 5.5 11.7a6 6 0 0 1-12 0c0-2.3 1-3.9 2.3-5.1.2 2 1.1 3.1 2.2 3.4-.7-4 .3-6.800 2-10z"/></svg>
+          <span>Chicken Fire</span>
+        </div>
+        <button class="cart-top" id="cartTop" type="button">السلة <b id="cartTopN">0</b></button>
+      </div>
+      <h1>فراخ مقرمشة <em>سخنة</em> لحد باب البيت</h1>
+      <p>برجر وساندوتشات وبروست وبوكسات. اختار من المنيو وكمّل الطلب على واتساب، والتوصيل في مرسى مطروح.</p>
+      <div class="facts"><span>شارع التحرير، مرسى مطروح</span><span>كاش عند الاستلام</span><span>الطلب على واتساب</span></div>
+      <a class="cta" href="#menu" data-go="menu">شوف المنيو</a>
+    </div>
+  </section>
+
+  <nav class="chips" id="chips" aria-label="أقسام المنيو"><div class="wrap" id="chipsRow"></div></nav>
+
+  <main class="wrap" id="menu">
+    <div class="intro">
+      <h2>المنيو</h2>
+      <p>الأسعار بالجنيه. اضغط على السعر عشان تضيف للسلة، وبعدها كمّل الطلب على واتساب.</p>
+    </div>
+    <div class="menu" id="menuList"></div>
+  </main>
+
+  <section class="why">
+    <div class="wrap">
+      <h2>ليه Chicken Fire؟</h2>
+      <div class="why-grid">
+        <div><h3>كاش عند الاستلام</h3><p>ادفع لما الطلب يوصلك، من غير أي دفع أونلاين.</p></div>
+        <div><h3>الطلب على واتساب</h3><p>بتختار من المنيو، والطلب بيتكتب لك جاهز تبعته على طول.</p></div>
+        <div><h3>حجم الوجبة واضح</h3><p>بروست من قطعتين لـ 20 قطعة، وكل وجبة معاها بطاطس وأرز وعيش وصوص.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <div>
+        <h2>اطلب أو اسأل</h2>
+        <dl>
+          <div><dt>العنوان</dt><dd>شارع التحرير، مرسى مطروح</dd></div>
+          <div><dt>واتساب وتليفون</dt><dd><span class="num" id="phoneShow"></span></dd></div>
+        </dl>
+      </div>
+      <div class="actions">
+        <a class="btn" id="waContact" href="#" target="_blank" rel="noopener">كلمنا على واتساب</a>
+        <a class="btn ghost" id="callContact" href="#">اتصل بينا</a>
+      </div>
+    </div>
+  </section>
+  <footer>© 2026 Chicken Fire. كل الحقوق محفوظة.</footer>
+
+  <div class="cartbar" id="cartbar" hidden>
+    <button type="button" id="cartOpen"><span>عرض السلة (<span id="cbN">0</span>)</span><span class="tot"><span id="cbT">0</span> ج</span></button>
+  </div>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <header><h2 id="sheetTitle">سلتك</h2><button class="x" type="button" id="sheetClose" aria-label="إغلاق">✕</button></header>
+      <div id="lines"></div>
+      <div class="sum" id="sum"></div>
+      <div id="checkout">
+        <div class="modes" role="radiogroup" aria-label="طريقة الاستلام">
+          <input type="radio" name="mode" id="m-delivery" value="delivery" checked><label for="m-delivery">توصيل</label>
+          <input type="radio" name="mode" id="m-takeaway" value="takeaway"><label for="m-takeaway">استلام</label>
+          <input type="radio" name="mode" id="m-dine" value="dine"><label for="m-dine">داخل المطعم</label>
+        </div>
+        <div class="field"><label for="f-name">الاسم</label><input id="f-name" autocomplete="name"></div>
+        <div class="field"><label for="f-phone">رقم الموبايل</label><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right"></div>
+        <div class="field" id="w-address"><label for="f-address">العنوان بالتفصيل</label><input id="f-address" autocomplete="street-address"></div>
+        <div class="field" id="w-table" hidden><label for="f-table">رقم الترابيزة</label><input id="f-table" inputmode="numeric"></div>
+        <div class="field"><label for="f-notes">ملاحظات (اختياري)</label><textarea id="f-notes" rows="2"></textarea></div>
+        <div id="err" role="alert"></div>
+        <a class="btn" id="send" href="#" target="_blank" rel="noopener">ابعت الطلب على واتساب</a>
+        <p class="hint">هيفتح واتساب والطلب مكتوب جاهز. اضغط إرسال هناك عشان يوصلنا.</p>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" hidden>اتضاف للسلة</div>
+</div>
+
+<script>
+/* ---- settings: edit these ---- */
+var WHATSAPP = '201099896896';        // international format, no plus sign
+var PHONE_SHOW = '010 99896896';
+var PHONE_TEL = '01099896896';
+var IS_OPEN = true;                   // false shows the closed banner and blocks orders
+var DELIVERY_FEE = 0;                 // added to delivery orders, in EGP
+var COUPONS = {};                     // e.g. { 'CODE10': 0.10 } for 10% off; empty hides the coupon field
+
+/* ---- menu ---- */
+var S = 'سنجل', D = 'دبل';
+var MENU = [
+  { id: 'burger', title: 'برجر فراخ', pre: 'برجر', note: 'اختار سنجل أو دبل', items: [
+    { n: 'تشيكن فاير', d: 'برجر فراخ مقلي، هوت دوج مكرمل، تكساس صوص شيدر، خس، طماطم', p: { 'سنجل': 105, 'دبل': 135 } },
+    { n: 'تشيكن هالبينو', d: 'برجر فراخ مقلي، صوص الجبنة، صوص فاير، فلفل هالبينو، خيار مخلل، خس، طماطم', p: { 'سنجل': 105, 'دبل': 140 } },
+    { n: 'تشيكن رانش', d: 'برجر فراخ مقلي، صوص رانش، خيار مخلل، صوص جبنة، رومي مدخن، خس', p: { 'سنجل': 110, 'دبل': 140 } },
+    { n: 'تشيكن حلقات بصل', d: 'برجر فراخ مقلي، صوص شيدر، حلقات بصل، صوص سويت شيلي، خس، خيار مخلل، تكساس', p: { 'سنجل': 115, 'دبل': 145 } },
+    { n: 'تشيكن بابريكا', d: 'برجر فراخ مقلي، فلفل ألوان مكرمل، صوص رانش، صوص شيدر، خس، طماطم', p: { 'سنجل': 105, 'دبل': 140 } },
+    { n: 'الديناصور فاير', d: '3 طبقات فراخ، شيدر، كاتشب، رومي مدخن، حلقات بصل، باربكيو، بيكون', p: 220 },
+    { n: 'دبل تشيكن فاير', d: 'دبل صدور فراخ، خس، صوص فاير، روزبيف تركي مدخن، صوص شيدر، ستيك', p: 165 },
+    { n: 'تاور فاير', d: '3 طبقات فراخ مقلي، شيدر، كاتشب، رومي مدخن، حلقات بصل، باربكيو، بيكون', p: 220 },
+    { n: 'كوردن بلو', p: 140 }
+  ]},
+  { id: 'sandwich', title: 'تشيكن ساندوتش', pre: 'ساندوتش', note: 'اختار سنجل أو دبل', items: [
+    { n: 'كرانشي فاير', img: 'img/b1.png', d: 'دوريتوس، سويت شيلي، صوص شيدر', p: { 'سنجل': 110 } },
+    { n: 'ستيك فاير', img: 'img/b2.png', d: 'صوص رانش، صوص شيدر، روزبيف، 2 موتزريلا ستيك', p: { 'سنجل': 125 } },
+    { n: 'ذا رانش', img: 'img/b3.png', d: 'صوص رانش، رومي مدخن، صوص شيدر', p: { 'سنجل': 105, 'دبل': 140 } },
+    { n: 'مشروم', img: 'img/b1.png', d: 'مشروم، صوص شيدر، صوص تكساس', p: { 'سنجل': 110, 'دبل': 145 } },
+    { n: 'باربيكيو', img: 'img/b2.png', d: 'روز بيف، صوص شيدر، حلقات بصل', p: { 'سنجل': 105, 'دبل': 140 } },
+    { n: 'تاور فاير', img: 'img/b3.png', d: 'صوص فاير، صوص جبنة شيدر، حلقات بصل', p: { 'سنجل': 110, 'دبل': 145 } }
+  ]},
+  { id: 'soori', title: 'سوري', items: [
+    { n: 'زينجر هالبينو', l: 'سوري زينجر هالبينو', p: 105 },
+    { n: 'كرسبي', l: 'سوري كرسبي', p: 100 },
+    { n: 'فاهيتا', l: 'سوري فاهيتا', p: 100 },
+    { n: 'سندوتش بطاطس', p: 40 },
+    { n: 'سندوتش بطاطس جبنة', p: 65 }
+  ]},
+  { id: 'roast', title: 'وجبات البروست', pre: 'بروست', note: 'كل وجبة معها بطاطس وأرز وعيش وصوص', items: [
+    { n: 'قطعتين', c: 2, p: 125 }, { n: '3 قطع', c: 3, p: 160 }, { n: '5 قطع', c: 5, p: 270 },
+    { n: '7 قطع', c: 7, p: 365 }, { n: '10 قطع', c: 10, p: 450 }, { n: '15 قطعة', c: 15, p: 690 }, { n: '20 قطعة', c: 20, p: 850 }
+  ]},
+  { id: 'strips', title: 'وجبات إستربس', pre: 'إستربس', note: 'كل وجبة معها بطاطس وأرز وعيش وصوص', items: [
+    { n: '3 قطع', c: 3, p: 115 }, { n: '5 قطع', c: 5, p: 180 }, { n: '7 قطع', c: 7, p: 230 },
+    { n: '12 قطعة', c: 12, p: 390 }, { n: '20 قطعة', c: 20, p: 620 }
+  ]},
+  { id: 'mos7ab', title: 'مسحب', pre: 'مسحب', note: 'صوص شيدر، صوص فاير، بطاطس، عيش', items: [
+    { n: '3 قطع', c: 3, p: 145 }, { n: '6 قطع', c: 6, p: 270 }, { n: '15 قطعة', c: 15, p: 550 }
+  ]},
+  { id: 'pasta', title: 'باستا', pre: 'باستا', items: [
+    { n: 'تشيكن فاير', p: 150 }, { n: 'نجرسكو', p: 170 }, { n: 'الفريدو', p: 140 }, { n: 'بينك صوص', p: 135 }
+  ]},
+  { id: 'boxes', title: 'بوكسات', items: [
+    { n: 'بوكس الحبايب', p: 200 }, { n: 'بوكس الصحاب', p: 265 }, { n: 'بوكس العيلة', p: 440 }
+  ]},
+  { id: 'sides', title: 'مقبلات', items: [
+    { n: 'حلقات بصل', p: 60 }, { n: 'موتزريلا ستيك', p: 75 }, { n: 'كلوسلو', p: 25 }, { n: 'بطاطس', p: 35 },
+    { n: 'بطاطس جبنة', p: 75 }, { n: 'بطاطس سموك', p: 85 }, { n: 'بطاطس تشيكن', p: 100 },
+    { n: 'أرز سادة', p: 40 }, { n: 'ريزو', p: 80 }
+  ]},
+  { id: 'sauces', title: 'صوصات', pre: 'صوص', items: [
+    { n: 'جبنة شيدر', p: 55 }, { n: 'رانش', p: 25 }, { n: 'تكساس', p: 25 }, { n: 'فاير', p: 30 },
+    { n: 'ألف جزيرة', p: 25 }, { n: 'باربكيو', p: 30 }, { n: 'هالبينو', p: 30 }
+  ]},
+  { id: 'drinks', title: 'مشروبات', items: [
+    { n: 'مياه', p: 15 }, { n: 'صودا', p: 30 }, { n: 'مشروب طاقة', p: 30 }, { n: 'لتر كولا', p: 60 }
+  ]}
+];
+
+/* ---- helpers ---- */
+var $ = function (id) { return document.getElementById(id); };
+var lookup = {}, cart = {}, couponRate = 0, couponCode = '';
+function labelOf(sec, it) { return it.l || ((sec.pre ? sec.pre + ' ' : '') + it.n); }
+
+function buildMenu() {
+  var html = '', chips = '';
+  MENU.forEach(function (sec, si) {
+    chips += '<a href="#sec-' + sec.id + '" data-go="sec-' + sec.id + '">' + sec.title + '</a>';
+    html += '<section class="sec" id="sec-' + sec.id + '"><h3>' + sec.title + '</h3>' + (sec.note ? '<div class="note">' + sec.note + '</div>' : '');
+    sec.items.forEach(function (it, ii) {
+      var base = si + '-' + ii, opts = '', label = labelOf(sec, it);
+      var sizes = typeof it.p === 'number' ? [['', it.p]] : Object.keys(it.p).map(function (k) { return [k, it.p[k]]; });
+      sizes.forEach(function (s) {
+        var key = base + '|' + s[0];
+        lookup[key] = { label: label + (s[0] ? ' (' + s[0] + ')' : ''), price: s[1] };
+        opts += '<button type="button" class="add" data-k="' + key + '">' + (s[0] ? '<small>' + s[0] + '</small>' : '') + s[1] + ' ج</button>';
+      });
+      var per = it.c ? '<span class="per">حوالي ' + Math.round(it.p / it.c) + ' ج للقطعة</span>' : '';
+      html += '<div class="item' + (it.img ? ' has-img' : '') + '">' + (it.img ? '<img class="ph" src="' + it.img + '" alt="' + it.n + '" loading="lazy">' : '') + '<div><h4>' + it.n + '</h4>' + (it.d ? '<p>' + it.d + '</p>' : '') + per + '</div><div class="opts">' + opts + '</div></div>';
+    });
+    html += '</section>';
+  });
+  $('menuList').innerHTML = html;
+  $('chipsRow').innerHTML = chips;
+}
+
+function save() { try { localStorage.setItem('cf-cart', JSON.stringify(cart)); } catch (e) {} }
+function load() {
+  try {
+    var o = JSON.parse(localStorage.getItem('cf-cart') || '{}');
+    Object.keys(o).forEach(function (k) { if (lookup[k] && o[k] > 0) cart[k] = o[k]; });
+  } catch (e) {}
+}
+function count() { return Object.keys(cart).reduce(function (a, k) { return a + cart[k]; }, 0); }
+function subtotal() { return Object.keys(cart).reduce(function (a, k) { return a + cart[k] * lookup[k].price; }, 0); }
+function mode() { return document.querySelector('input[name="mode"]:checked').value; }
+function totals() {
+  var sub = subtotal(), disc = Math.round(sub * couponRate);
+  var fee = (mode() === 'delivery' && sub > 0) ? DELIVERY_FEE : 0;
+  return { sub: sub, disc: disc, fee: fee, total: sub - disc + fee };
+}
+function digits(s) { return String(s).replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }); }
+
+function render() {
+  var n = count(), t = totals();
+  $('cartTopN').textContent = n;
+  $('cbN').textContent = n;
+  $('cbT').textContent = t.total;
+  $('cartbar').hidden = n === 0;
+  var h = '';
+  Object.keys(cart).forEach(function (k) {
+    h += '<div class="line"><b>' + lookup[k].label + '</b><div class="qty"><button type="button" data-q="-1" data-k="' + k + '" aria-label="أقل">−</button><span>' + cart[k] + '</span><button type="button" data-q="1" data-k="' + k + '" aria-label="أكتر">+</button></div><span class="lp">' + (cart[k] * lookup[k].price) + ' ج</span></div>';
+  });
+  $('lines').innerHTML = h || '<div class="empty">السلة فاضية. ضيف أصناف من المنيو.</div>';
+  var s = '';
+  if (Object.keys(COUPONS).length) {
+    s += '<div class="field"><label for="f-coupon">كود الخصم</label><div style="display:flex;gap:8px"><input id="f-coupon" value="' + couponCode + '" dir="ltr" style="flex:1;min-width:0"><button type="button" class="btn ghost" id="applyCoupon" style="padding:10px 16px">تطبيق</button></div></div>';
+  }
+  s += '<div><span>المجموع</span><span>' + t.sub + ' ج</span></div>';
+  if (t.disc) s += '<div><span>الخصم</span><span>-' + t.disc + ' ج</span></div>';
+  if (t.fee) s += '<div><span>التوصيل</span><span>' + t.fee + ' ج</span></div>';
+  s += '<div class="grand"><span>الإجمالي</span><span>' + t.total + ' ج</span></div>';
+  $('sum').innerHTML = s;
+  $('checkout').hidden = n === 0;
+  $('send').href = waUrl();
+  save();
+}
+
+function orderText() {
+  var t = totals(), m = mode();
+  var lines = Object.keys(cart).map(function (k) { return '• ' + cart[k] + ' × ' + lookup[k].label + ' = ' + (cart[k] * lookup[k].price) + ' ج'; });
+  var out = ['طلب جديد من Chicken Fire', ''].concat(lines, ['']);
+  out.push('المجموع: ' + t.sub + ' ج');
+  if (t.disc) out.push('الخصم: -' + t.disc + ' ج');
+  if (t.fee) out.push('التوصيل: ' + t.fee + ' ج');
+  out.push('الإجمالي: ' + t.total + ' ج', '');
+  out.push('طريقة الاستلام: ' + (m === 'delivery' ? 'توصيل' : m === 'takeaway' ? 'استلام' : 'داخل المطعم'));
+  out.push('الاسم: ' + $('f-name').value.trim());
+  out.push('الموبايل: ' + digits($('f-phone').value).trim());
+  if (m === 'delivery') out.push('العنوان: ' + $('f-address').value.trim());
+  if (m === 'dine') out.push('رقم الترابيزة: ' + $('f-table').value.trim());
+  if ($('f-notes').value.trim()) out.push('ملاحظات: ' + $('f-notes').value.trim());
+  out.push('الدفع: كاش عند الاستلام');
+  return out.join('\n');
+}
+function waUrl() {
+    var message = orderText();
+    return 'https://api.whatsapp.com/send?phone='
+        + WHATSAPP
+        + '&text='
+        + encodeURIComponent(message);
+}
+function validate() {
+  var m = mode();
+  if (!IS_OPEN) return 'المطعم مقفول حاليًا. جرّب تاني بعدين.';
+  if (!count()) return 'السلة فاضية.';
+  if (!$('f-name').value.trim()) return 'اكتب اسمك.';
+  if (digits($('f-phone').value).replace(/\D/g, '').length < 10) return 'اكتب رقم موبايل صحيح.';
+  if (m === 'delivery' && !$('f-address').value.trim()) return 'اكتب العنوان بالتفصيل.';
+  if (m === 'dine' && !$('f-table').value.trim()) return 'اكتب رقم الترابيزة.';
+  return '';
+}
+
+function toast() {
+  var t = $('toast'); t.hidden = false;
+  clearTimeout(toast.id); toast.id = setTimeout(function () { t.hidden = true; }, 1100);
+}
+function openSheet() { $('sheet').hidden = false; render(); }
+function closeSheet() { $('sheet').hidden = true; }
+
+/* ---- wiring ---- */
+document.documentElement.setAttribute('lang', 'ar');
+document.documentElement.setAttribute('dir', 'rtl');
+buildMenu(); load();
+$('closed').hidden = IS_OPEN;
+$('phoneShow').textContent = PHONE_SHOW;
+$('waContact').href = 'https://wa.me/' + WHATSAPP;
+$('callContact').href = 'tel:' + PHONE_TEL;
+
+document.addEventListener('click', function (e) {
+  var go = e.target.closest('[data-go]');
+  if (go) { e.preventDefault(); var el = $(go.getAttribute('data-go')); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  var add = e.target.closest('.add');
+  if (add) {
+    var k = add.getAttribute('data-k'); cart[k] = (cart[k] || 0) + 1; render(); toast();
+    add.classList.remove('pop'); void add.offsetWidth; add.classList.add('pop'); return;
+  }
+  var q = e.target.closest('[data-q]');
+  if (q) {
+    var key = q.getAttribute('data-k'); cart[key] = (cart[key] || 0) + Number(q.getAttribute('data-q'));
+    if (cart[key] <= 0) delete cart[key];
+    render(); return;
+  }
+  if (e.target.id === 'applyCoupon') {
+    var c = $('f-coupon').value.trim().toUpperCase();
+    if (COUPONS[c]) { couponRate = COUPONS[c]; couponCode = c; $('err').textContent = ''; }
+    else { couponRate = 0; couponCode = ''; $('err').textContent = 'كود الخصم غير صحيح.'; }
+    render(); return;
+  }
+  if (e.target === $('sheet')) closeSheet();
+});
+$('cartTop').addEventListener('click', openSheet);
+$('cartOpen').addEventListener('click', openSheet);
+$('sheetClose').addEventListener('click', closeSheet);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
+
+function syncMode() {
+  var m = mode();
+  $('w-address').hidden = m !== 'delivery';
+  $('w-table').hidden = m !== 'dine';
+  render();
+}
+Array.prototype.forEach.call(document.querySelectorAll('input[name="mode"]'), function (r) { r.addEventListener('change', syncMode); });
+['f-name', 'f-phone', 'f-address', 'f-table', 'f-notes'].forEach(function (id) {
+  $(id).addEventListener('input', function () { $('send').href = waUrl(); $('err').textContent = ''; });
+});
+$('send').addEventListener('click', function (e) {
+  var msg = validate();
+  if (msg) { e.preventDefault(); $('err').textContent = msg; }
+  else { this.href = waUrl(); }
+});
+syncMode();
+</script>
+
+</body>
+</html>
